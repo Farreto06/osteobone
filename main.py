@@ -1,5 +1,7 @@
 import os
 from openpyxl import load_workbook
+from openpyxl import Workbook
+from openpyxl.drawing.image import Image
 import db
 
 class Excel:
@@ -17,9 +19,20 @@ class Excel:
         try:
             hoja = self.wb[self.nombre_hoja]
             hoja[celda] = nuevo_valor
-            self.wb.save(self.ruta_excel)
         except Exception as e:
             print(f"Ocurrió un error al modificar la celda: {celda}, {nuevo_valor}.\nError: {e}")
+
+    def agregar_imagen(self, ruta_imagen, celda):
+        try:
+            hoja = self.wb[self.nombre_hoja]
+            img = Image(ruta_imagen)
+
+            img.height = 130
+            img.width = 260
+
+            hoja.add_image(img, celda)
+        except Exception as e:
+            print(f"Ocurrió un error al agregar la imagen: {e}")
 
     def leer_celda(self, celda):
         try:
@@ -30,15 +43,21 @@ class Excel:
             return None
         
     def cerrar(self):
+        self.guardar()
         self.wb.close()
 
     def crear_retencion(self, diccionario_modificaciones):
         for celda, valor in diccionario_modificaciones.items():
             self.modificar_celda(celda, valor)
+        self.agregar_imagen("./img/firma.jpeg", "C27")
+        self.cerrar()
         print("Retención creada exitosamente.")
 
+    def guardar(self):
+        self.wb.save(self.ruta_excel)
 
-arch = Excel("Plantilla Retenciones osteobone.ods", "Hoja1")
+
+arch = Excel("Plantilla_Retenciones.xlsx", "Hoja1")
 
 #inputs
 date = "02/07/2026"
@@ -54,7 +73,7 @@ scuensial_number = db.obtener_siguiente_codigo()
 
 split_date = date.split("/")
 month = split_date[1]
-year = split_date[2]
+year = f'AÑO: {split_date[2]}'
 
 numeroComprobante = f'N. DE COMPROBANTE {year}{month}{scuensial_number}'
 
@@ -90,4 +109,4 @@ diccionario_modificaciones = {
 
 arch.crear_retencion(diccionario_modificaciones)
 
-print("Ejecición finalizada.")
+print("Ejecucion finalizada.")

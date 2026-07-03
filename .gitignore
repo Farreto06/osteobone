@@ -218,4 +218,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 
-.Plantilla Retenciones osteobone.xlsx
+Plantilla_Retenciones.xlsx
+default_db.bak
+default_db.dat
+default_db.dir
